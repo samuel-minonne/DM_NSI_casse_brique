@@ -16,7 +16,8 @@ Level design:
 -a way to store and load a specific level
 -make at least one level (obviously)
 
-
+Player:
+-
 
 Ball:
 -always the same size
@@ -27,4 +28,4 @@ Ball:
 Bricks:
 -at least 3 different types
 </br>
-heheheha
+
