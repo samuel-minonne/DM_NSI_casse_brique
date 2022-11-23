@@ -29,3 +29,9 @@ Bricks:
 -at least 3 different types
 </br>
 
+class Brick:
+    def __init__(self,x,y,hp:int):
+        self.xpos = x
+        self.ypos = y
+        self.hp = hp
+        self.hitbox = hb.Hitbox(self.xpos,self.ypos,bricksLength,bricksHeight)
