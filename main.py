@@ -1,5 +1,5 @@
 import pyxel
-import SamuelHitboxes as hb
+import hitboxes as hb
 import math
 
 #========================================================================parameters===================================================================
