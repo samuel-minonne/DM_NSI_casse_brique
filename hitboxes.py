@@ -50,3 +50,6 @@ def doHitboxesTouch(hitbox1:Hitbox,hitbox2:Hitbox):
     else:
         return ['f','f']
     
+if name == "__main__":
+    import doctest
+    doctest.testmod(verbose = True)
