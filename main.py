@@ -24,7 +24,7 @@ ballStartX = 64
 ballStartY = 64
 ballSize = 4
 ballStartAngle = 45 #warning, the y axis is the wrong way
-ballStartSpeed = 4
+ballStartSpeed = 2
 ballColor = 10
 
 bricksLength = 16
@@ -92,10 +92,12 @@ class Ball:
         """Moves the ball"""
         xspeed = math.cos(math.radians(self.angle))*self.speed
         yspeed = math.sin(math.radians(self.angle))*self.speed
+        positivex = xspeed	> 0 #True si xspeed est positif, sinon false
+        positivey = yspeed	> 0 #True si yspeed est positif, sinon false
         
         def collisions():
             """Checks for collisions and modifies the values accordingly"""
-            global xspeed, yspeed
+            global xspeed, yspeed, positivex, positivey
             
             if self.xpos <= minX:
                 self.bounce(90)
@@ -110,8 +112,11 @@ class Ball:
                 
             xspeed = math.cos(math.radians(self.angle))*self.speed
             yspeed = math.sin(math.radians(self.angle))*self.speed
-                
-        for i in range (xspeed):
+            positivex = xspeed	> 0 #True si xspeed est positif, sinon false
+            positivey = yspeed	> 0 #True si yspeed est positif, sinon false
+            print(xspeed)
+        for i in range (0,round(xspeed),1): #pourquoi i il vaut toujours 0? parceque il le round à 1 et que 1 est exclu
+            print(i)
             collisions()
             if xspeed > 0 :
                 self.xpos += 1
@@ -120,7 +125,8 @@ class Ball:
                 self.xpos -= 1
                 self.hitbox.moveTo(self.getX(),self.getY())
                 
-        for i in range (yspeed):
+        for i in range (0,round(yspeed),1):
+            print(i)
             collisions()
             if yspeed > 0 :
                 self.ypos += 1
@@ -130,7 +136,6 @@ class Ball:
                 self.hitbox.moveTo(self.getX(),self.getY())
         #ball.xpos += math.cos(math.radians(self.angle))*self.speed
         #ball.ypos += math.sin(math.radians(self.angle))*self.speed
-        collisions()
 
 class Brick:
     def __init__(self,x,y,hp:int):
@@ -153,7 +158,9 @@ for i in range(3):
 def update():
     player.playerMovement()
     ball.ballMovement()
-    print(hb.doHitboxesTouch(ball.hitbox,player.hitbox) == ['y','-'])
+    if pyxel.btnp(pyxel.KEY_B):
+        ball.bounce(90)
+
     
 def draw():
     pyxel.cls(0)
