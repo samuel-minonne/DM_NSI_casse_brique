@@ -17,7 +17,7 @@ playerStartY = 128
 playerLength = 32
 playerHeight = 8
 playerSpeed = 2
-playerColor = 1
+playerColor = 11
 
 ballStartX = 64
 ballStartY = 64
@@ -213,7 +213,9 @@ player = Player()
 ball = Ball()
 bricksList = []
 for i in range(3):
-    bricksList.append(Brick(bricksXSpacing*i,20,1))
+    bricksList.append(Brick(bricksXSpacing*i,bricksYSpacing-bricksHeight,1))
+for i in range(3):
+    bricksList.append(Brick(bricksXSpacing*i,bricksYSpacing+1,1))
 
 #================================================================running the game===================================================
 def update():
