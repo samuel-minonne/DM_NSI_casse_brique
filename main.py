@@ -108,7 +108,12 @@ class Ball:
             elif self.ypos + ballSize >= maxY:
                 self.bounce(0)
             if hb.doHitboxesTouch(ball.hitbox,player.hitbox) == ['y','-']:
-                self.bounce(0)
+                if ball.xpos < player.xpos:
+                    self.bounce(350)
+                elif ball.xpos > player.xpos + playerLength:
+                    self.bounce(10)
+                else:
+                    self.bounce(0)
                 
             xspeed = math.cos(math.radians(self.angle))*self.speed
             yspeed = math.sin(math.radians(self.angle))*self.speed
