@@ -196,7 +196,7 @@ class Brick:
         self.color = 3
         self.hitbox = Hitbox(self.xpos,self.ypos,bricksLength,bricksHeight)
 
-
+#==============================================================================starting the game================================================
             
 pyxel.init(gameWidth, gameHeight, title=gameTitle, display_scale=gameScale)
 
@@ -204,8 +204,9 @@ player = Player()
 ball = Ball()
 bricksList = []
 for i in range(3):
-    bricksList.append(Brick(8*i,20,1))
+    bricksList.append(Brick(bricksXSpacing*i,20,1))
 
+#================================================================running the game===================================================
 def update():
     player.playerMovement()
     ball.ballMovement()
