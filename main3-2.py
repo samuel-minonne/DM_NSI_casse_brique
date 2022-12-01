@@ -223,6 +223,7 @@ def update():
         brick.brickUpdate()
     if pyxel.btnp(pyxel.KEY_B):
         ball.bounce(90)
+    print("letmeprintplease")
 
     
 def draw():
