@@ -193,8 +193,19 @@ class Brick:
         self.xpos = x
         self.ypos = y
         self.hp = hp
-        self.color = 3
+        self.colour = 3
         self.hitbox = Hitbox(self.xpos,self.ypos,bricksLength,bricksHeight)
+        
+    def brickUpdate(self):
+        if self.hp == 1:
+            self.colour = 5
+        elif self.hp == 2:
+            self.colour = 12
+        elif self.hp == 3:
+            self.colour = 6
+        else:
+            self.colour = 13
+        
 
 #==============================================================================starting the game================================================
             
@@ -210,6 +221,8 @@ for i in range(3):
 def update():
     player.playerMovement()
     ball.ballMovement()
+    for brick in bricksList:
+        brick.brickUpdate()
     if pyxel.btnp(pyxel.KEY_B):
         ball.bounce(90)
 
