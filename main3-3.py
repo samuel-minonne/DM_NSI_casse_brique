@@ -143,6 +143,12 @@ class Ball:
             """Checks for collisions and modifies the values accordingly"""
             global xspeed, yspeed, positivex, positivey
             
+            def checkAllBricks():
+                """Checks for collisions for every brick"""
+                for brick in bricksList:
+                    status = doHitboxesTouch(self.hitbox,brick.hitbox)#à finir
+                    
+            
             if self.xpos <= minX:
                 self.bounce(90)
             elif self.xpos + ballSize >= maxX:
