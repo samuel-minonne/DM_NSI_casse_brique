@@ -3,8 +3,8 @@ import math
 
 #========================================================================parameters===================================================================
 gameTitle = "Casse Briques"
-gameHeight = 200
-gameWidth = 128
+gameHeight = 256
+gameWidth = 256
 gameScale = 4
 
 minX = 0
@@ -31,8 +31,6 @@ bricksHeight = 4
 bricksXSpacing = bricksLength + 1 
 bricksYSpacing = bricksHeight + 1
 
-key_up = pyxel.KEY_Z
-key_down = pyxel.KEY_S
 key_left = pyxel.KEY_Q
 key_right = pyxel.KEY_D
 
