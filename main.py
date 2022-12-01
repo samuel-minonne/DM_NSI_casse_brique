@@ -91,7 +91,7 @@ class Player:
         self.ypos = float(playerStartY)
         self.length = playerLength
         self.height = playerHeight
-        self.hitbox = hb.Hitbox(self.xpos,self.ypos,self.length,self.height)
+        self.hitbox = Hitbox(self.xpos,self.ypos,self.length,self.height)
     
     def getX(self):
         """Returns the x coordinate of the player as an int"""
@@ -120,7 +120,7 @@ class Ball:
         self.speed = ballStartSpeed
         self.length = ballSize
         self.height = ballSize
-        self.hitbox = hb.Hitbox(self.xpos,self.ypos,self.length,self.height)
+        self.hitbox = Hitbox(self.xpos,self.ypos,self.length,self.height)
         
     def getX(self):
         """Returns the x coordinate of the ball as an int"""
@@ -153,7 +153,7 @@ class Ball:
                 self.bounce(0)
             elif self.ypos + ballSize >= maxY:
                 self.bounce(0)
-            if hb.doHitboxesTouch(ball.hitbox,player.hitbox) == ['y','-']:
+            if doHitboxesTouch(ball.hitbox,player.hitbox) == ['y','-']:
                 if ball.xpos < player.xpos:
                     self.bounce(350)
                 elif ball.xpos > player.xpos + playerLength:
@@ -194,7 +194,7 @@ class Brick:
         self.ypos = y
         self.hp = hp
         self.color = 3
-        self.hitbox = hb.Hitbox(self.xpos,self.ypos,bricksLength,bricksHeight)
+        self.hitbox = Hitbox(self.xpos,self.ypos,bricksLength,bricksHeight)
 
 
             
