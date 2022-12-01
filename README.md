@@ -3,7 +3,7 @@
 Hello, this is a placeholder that will be in use until I do something with it
 
 Have a nice day :)
- use this link to play the game:  https://kitao.github.io/pyxel/wasm/launcher/?run=samuel-minonne.DM_NSI_casse_brique.main&packages=hitboxes
+ use this link to play the game:  https://kitao.github.io/pyxel/wasm/launcher/?run=samuel-minonne.DM_NSI_casse_brique.main
 
 
 General mechanics:
