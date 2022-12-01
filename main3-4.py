@@ -219,9 +219,9 @@ player = Player()
 ball = Ball()
 bricksList = []
 for i in range(3):
-    bricksList.append(Brick(bricksXSpacing*i,bricksYSpacing-bricksHeight,1))
+    bricksList.append(Brick(bricksXSpacing*i,bricksYSpacing,1))
 for i in range(3):
-    bricksList.append(Brick(bricksXSpacing*i,bricksYSpacing+1,1))
+    bricksList.append(Brick(bricksXSpacing*i,2*bricksYSpacing,1))
 
 #================================================================running the game===================================================
 def update():
