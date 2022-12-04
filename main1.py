@@ -1,7 +1,7 @@
 import pyxel
 import math
 import random
-#vitesse augmente avec le temps? , angle de départ alléatoire
+#voir le redme sur github pour les infos générales: https://github.com/samuel-minonne/DM_NSI_casse_brique
 #========================================================================parameters===================================================================
 gameTitle = "Casse Briques"
 gameHeight = 200
@@ -110,7 +110,6 @@ class Player:
     
     def playerMovement(self):
         """Moves the player"""
-        # reading the imputs and converting them to speed
         if pyxel.btn(key_right) and self.xpos+self.length<maxX:
             self.xpos += playerSpeed
             
@@ -243,7 +242,7 @@ class Ball:
             self.positivey = (math.sin(math.radians(self.angle)) > 0.0) #True si on va vers le bas (il faut ajouter à y) est positif, sinon false
             print(self.bounceList)
 
-        for i in range (abs(round(xspeed))):
+        for i in range (abs(round(xspeed))):#pour pouvoir gérer des vitesses supérieures à 1, on avance de 1, puis on vérifie les colisions, puis on répète autant de fois que nécéssaire
             print("x")
             collisions()
             if self.positivex == True:
@@ -264,8 +263,6 @@ class Ball:
             elif self.positivey == False :
                 self.ypos -= 1
                 self.hitbox.moveTo(self.getX(),self.getY())
-        #ball.xpos += math.cos(math.radians(self.angle))*self.speed
-        #ball.ypos += math.sin(math.radians(self.angle))*self.speed
 
 class Brick:
     def __init__(self,x,y,hp:int,type:int):
