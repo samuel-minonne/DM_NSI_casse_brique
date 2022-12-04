@@ -18,4 +18,8 @@ Know bugs:
 - the lives system doesn't work properly (sometimes more than one hp is lost)
 - if the player moves while the ball hits its side, the ball might get stuck inside the player
 - the game crashes if multiple bricks get deleted at the same time
+
+Things to do to improve the game:
+- Change the ball movement system so that we don't have to round the speed
+- Do more playtesting to find more bugs
 </br>
