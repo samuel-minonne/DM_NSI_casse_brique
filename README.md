@@ -12,7 +12,7 @@ There are three types of bricks:
 - orange bricks make the ball bonce in a random direction
 - white bricks make the ball go faster
 
-Use this link to play the game: https://kitao.github.io/pyxel/wasm/launcher/?run=samuel-minonne.DM_NSI_casse_brique.main
+Use this link to play the game: https://kitao.github.io/pyxel/wasm/launcher/?run=samuel-minonne.DM_NSI_casse_brique.main1
 
 Know bugs:
 - the lives system doesn't work properly (sometimes more than one hp is lost)
