@@ -13,21 +13,23 @@ maxX = gameWidth
 minY = 0
 maxY = gameHeight
 
-playerHP = 3
+playerStartHP = 5
 
 playerStartX = 64
 playerStartY = 128
 playerLength = 32
 playerHeight = 8
-playerSpeed = 2
+playerSpeed = 3.0
 playerColor = 11
 
-ballStartX = 64
-ballStartY = 64
+ballStartX = 100
+ballStartY = 50
 ballSize = 4
 ballStartAngle = 45 #warning, the y axis is the wrong way
-ballStartSpeed = 2
+ballStartSpeed = 2.0
 ballColor = 10
+ballSpeedIncrementation = 0.0003
+brickSpeedIncrementation = 1
 
 bricksLength = 32
 bricksHeight = 8
@@ -37,12 +39,12 @@ bricksYSpacing = bricksHeight + 1
 key_left = pyxel.KEY_Q
 key_right = pyxel.KEY_D
 
-level_line0 = [[3,1],[1,1],[0,0],[0,0],[1,1],[3,1]]#la 1ere ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
-level_line1 = [[1,2],[3,1],[1,3],[1,3],[3,1],[1,2]]#la 2eme ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
+level_line0 = [[1,1],[3,1],[0,0],[0,0],[3,1],[1,1]]#la 1ere ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
+level_line1 = [[2,1],[1,3],[3,2],[3,2],[1,3],[2,1]]#la 2eme ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
 level_line2 = [[0,0],[1,2],[1,1],[1,1],[1,2],[0,0]]#la 3eme ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
 
 #==================================================================classes================================================================
-#=====the hitboxes module=====
+#============the hitboxes module============
 class Hitbox:
     """a hitbox with a postion, a length and a height"""
     def __init__(self,xpos:int,ypos:int,length:int,height:int):
@@ -116,22 +118,26 @@ class Player:
             
         self.hitbox.moveTo(self.getX(),self.getY())
         
+#=======================================================================the ball class====================================================
 class Ball:
-    def __init__(self) -> None:
+    def __init__(self):
+        self.randomAngle = random.randint(45,135)
+        
         self.xpos = float(ballStartX)
         self.ypos = float(ballStartY)
-        self.angle = ballStartAngle
+        self.angle = self.randomAngle
         self.speed = ballStartSpeed
         self.length = ballSize
         self.height = ballSize
         self.hitbox = Hitbox(self.xpos,self.ypos,self.length,self.height)
+        self.playerHP = playerStartHP
         
         self.positivex = (math.cos(math.radians(self.angle)) > 0.0) #True si on va vers la droite (il faut ajouter à x) est positif, sinon false 
         self.positivey = (math.sin(math.radians(self.angle)) > 0.0) #True si on va vers le bas (il faut ajouter à y) est positif, sinon false
         self.bounceList = [] #pour éviter de rebondir plusieurs fois en même temps sur le même mur (et donc être bloqué)
         self.bouncedX = False #pour éviter des problèmes de plusieurs rebonds hors des limites du terrain
         self.bricksTouched = [] #pour éviter d'enlever plusieurs hp à une seule brique par coup
-        self.randomAngle = random.randint(45,135)
+        self.haveWeLostHP = False
         
     def getX(self):
         """Returns the x coordinate of the ball as an int"""
@@ -153,6 +159,7 @@ class Ball:
         """Moves the ball"""
         self.bounceList = [] #Toujours le bug de la balle qui se bloque sur les bords
         self.bricksTouched = []
+        self.haveWeLostHP = False
         self.randomAngle = random.randint(45,135)
         xspeed = math.cos(math.radians(self.angle))*self.speed
         yspeed = math.sin(math.radians(self.angle))*self.speed
@@ -166,6 +173,8 @@ class Ball:
             # On regarde d'abord les briques
             for brick in bricksList:
                 status = doHitboxesTouch(self.hitbox,brick.hitbox) #une variable staut pour éviter d'appeler la fonction plusieurs fois
+                if (not (status == ['f','f'] or status == ['o','o'])) and brick.type == 2 and brick not in self.bricksTouched:
+                    self.speed += brickSpeedIncrementation
                 if status == ['y','+']:
                     if brick.type == 3:
                         self.angle = self.randomAngle
@@ -174,25 +183,26 @@ class Ball:
                     if i not in self.bricksTouched: #pour éviter de taper plusieurs fois la même brique (oui je sais le copier-coller c'est pas bien j'aurais du créer une fonction)
                         brick.hp -= 1
                         self.bricksTouched.append(i)
-                if status == ['y','-']:
+                elif status == ['y','-']:
                     self.bounce(0)
                     if i not in self.bricksTouched: #pour éviter de taper plusieurs fois la même brique
                         brick.hp -= 1
                         self.bricksTouched.append(i)
-                if status == ['x','+']:
+                elif status == ['x','+']:
                     self.bounce(270)
                     if i not in self.bricksTouched: #pour éviter de taper plusieurs fois la même brique
                         brick.hp -= 1
                         self.bricksTouched.append(i)
-                if status == ['x','-']:
+                elif status == ['x','-']:
                     self.bounce(90)
                     if i not in self.bricksTouched: #pour éviter de taper plusieurs fois la même brique
                         brick.hp -= 1
                         self.bricksTouched.append(i)
+                    
             # On vérifie si on est toujours dans l'écran
             print('ball cords',self.xpos,self.ypos)  
             print('if statement',math.ceil(self.xpos) + ballSize >= maxX)
-            print('MaxX and ball right',maxX,math.ceil(self.xpos) + ballSize) #Car y est après le x? il bounce sur le y et donc il re bounce au x prochain sans que le xpos ait changé (car bonceList a reset entre temps)
+            print('MaxX and ball right',maxX,math.ceil(self.xpos) + ballSize) 
             if math.floor(self.xpos) <= minX:
                 if not self.bouncedX:
                     self.bounce(90)
@@ -204,6 +214,8 @@ class Ball:
             elif math.floor(self.ypos) <= minY:
                 self.bounce(360)
             elif math.ceil(self.ypos) + ballSize >= maxY:
+                if not self.haveWeLostHP:
+                    self.playerHP -= 1
                 self.bounce(0)
             print(self.xpos,self.ypos)
             # On fait les collisions avec le plateau
@@ -216,17 +228,21 @@ class Ball:
                 else:
                     self.bounce(0)
             elif playerStatus == ['y','+']:
-                    self.bounce(360)
+                self.bounce(360)
             elif playerStatus == ['x','+']:
+                if not self.bouncedX:
                     self.bounce(270)
+                self.bouncedX = True
             elif playerStatus == ['x','-']:
+                if not self.bouncedX:
                     self.bounce(90)
+                self.bouncedX = True
             
             self.positivex = (math.cos(math.radians(self.angle)) > 0.0) #True si on va vers la droite (il faut ajouter à x) est positif, sinon false 
             self.positivey = (math.sin(math.radians(self.angle)) > 0.0) #True si on va vers le bas (il faut ajouter à y) est positif, sinon false
             print(self.bounceList)
 
-        for i in range (abs(round(xspeed))): #pourquoi i il vaut toujours 0? parceque il le round à 1 et que 1 est exclu xspeed passe en négatif et donc on entre plus dans la boucle
+        for i in range (abs(round(xspeed))):
             print("x")
             collisions()
             if self.positivex == True:
@@ -274,6 +290,11 @@ class Brick:
                 self.colour = 5
             else:
                 self.colour = 13
+        elif self.type == 3:
+            if self.hp == 2:
+                self.colour = 9
+            else:
+                self.colour = 15
             
 def createBrickLine(line:list,lineNumber:int):
     """Creates a line of bricks, with a list of tuples as the line pattern and an int as the line number"""
@@ -292,12 +313,6 @@ bricksList = []
 createBrickLine(level_line0,0)
 createBrickLine(level_line1,1)
 createBrickLine(level_line2,2)
-#for i in range(6):
-#    bricksList.append(Brick(bricksXSpacing*i+2,bricksYSpacing,1,0))
-#for i in range(6):
-#    bricksList.append(Brick(bricksXSpacing*i+2,2*bricksYSpacing,1,0))
-
-
 
 #================================================================running the game===================================================
 def update():
@@ -313,6 +328,8 @@ def update():
             listBricksToRemove.append(i)
     for i in range (len(listBricksToRemove)):
         bricksList.pop(listBricksToRemove[i])
+        
+    ball.speed += ballSpeedIncrementation #augmente la vitesse de la balle de 0.9 toutes les 100 secondes
 
 def draw():
     pyxel.cls(0)
@@ -320,5 +337,10 @@ def draw():
     pyxel.rect(ball.getX(),ball.getY(),ball.length,ball.height,ballColor)
     for i in range(len(bricksList)):
         pyxel.rect(bricksList[i].xpos,bricksList[i].ypos,bricksLength,bricksHeight,bricksList[i].colour)
+    pyxel.text(3,3,'HP:'+str(ball.playerHP),4)
+    if bricksList == []:
+        pyxel.text(65,90,'Well done: YOU WON',4)
+    if ball.playerHP <= 0:
+        pyxel.text(70,90,'YOU LOST',4)
     
 pyxel.run(update, draw)
