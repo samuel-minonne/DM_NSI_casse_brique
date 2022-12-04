@@ -16,7 +16,7 @@ maxY = gameHeight
 playerStartHP = 5
 
 playerStartX = 64
-playerStartY = 128
+playerStartY = 150
 playerLength = 32
 playerHeight = 8
 playerSpeed = 3.0
@@ -29,7 +29,7 @@ ballStartAngle = 45 #warning, the y axis is the wrong way
 ballStartSpeed = 2.0
 ballColor = 10
 ballSpeedIncrementation = 0.0003
-brickSpeedIncrementation = 1
+brickSpeedIncrementation = 0.5
 
 bricksLength = 32
 bricksHeight = 8
@@ -39,9 +39,10 @@ bricksYSpacing = bricksHeight + 1
 key_left = pyxel.KEY_Q
 key_right = pyxel.KEY_D
 
-level_line0 = [[1,1],[3,1],[0,0],[0,0],[3,1],[1,1]]#la 1ere ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
+level_line0 = [[1,1],[3,1],[1,2],[1,2],[3,1],[1,1]]#la 1ere ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
 level_line1 = [[2,1],[1,3],[3,2],[3,2],[1,3],[2,1]]#la 2eme ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
-level_line2 = [[0,0],[1,2],[1,1],[1,1],[1,2],[0,0]]#la 3eme ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
+level_line2 = [[1,1],[1,2],[0,0],[0,0],[1,2],[1,1]]#la 3eme ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
+level_line3 = [[1,1],[1,1],[1,1],[1,1],[1,1],[1,1]]#la 4eme ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
 
 #==================================================================classes================================================================
 #============the hitboxes module============
@@ -313,6 +314,7 @@ bricksList = []
 createBrickLine(level_line0,0)
 createBrickLine(level_line1,1)
 createBrickLine(level_line2,2)
+createBrickLine(level_line3,3)
 
 #================================================================running the game===================================================
 def update():
@@ -338,7 +340,7 @@ def draw():
     for i in range(len(bricksList)):
         pyxel.rect(bricksList[i].xpos,bricksList[i].ypos,bricksLength,bricksHeight,bricksList[i].colour)
     pyxel.text(3,3,'HP:'+str(ball.playerHP),4)
-    if bricksList == []:
+    if bricksList == [] and ball.playerHP >0:
         pyxel.text(65,90,'Well done: YOU WON',4)
     if ball.playerHP <= 0:
         pyxel.text(70,90,'YOU LOST',4)
