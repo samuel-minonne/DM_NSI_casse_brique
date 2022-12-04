@@ -1,5 +1,6 @@
 # DM_NSI_casse_brique
 </br>
+
 Here is a quick explanation of the game:
 - move the player with Q and D (made for a french keyboard, the controls can be changed at the start of the code file)
 - if the ball hits the player on the edge, it will bonce at a different angle
