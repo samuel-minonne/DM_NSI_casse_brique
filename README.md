@@ -1,32 +1,23 @@
 # DM_NSI_casse_brique
 </br>
-Hello, this is a placeholder that will be in use until I do something with it
+Here is a quick explanation of the game:
+- move the player with Q and D (made for a french keyboard, the controls can be changed at the start of the code file)
+- if the ball hits the player on the edge, it will bonce at a different angle
+- the ball moves faster as the games goes on
 
-Have a nice day :)
- use this link to play the game:  https://kitao.github.io/pyxel/wasm/launcher/?run=samuel-minonne.DM_NSI_casse_brique.main3
+There are three types of bricks:
+- blue bricks are normal, the darker the blue the more health the brick has
+- orange bricks make the ball bonce in a random direction
+- white bricks make the ball go faster
+
+Use this link to play the game: https://kitao.github.io/pyxel/wasm/launcher/?run=samuel-minonne.DM_NSI_casse_brique.main3
 
 
 General mechanics:
 -lives system
--time system
--score system
--inputs with the keyboard
-
-Level design:
--a way to store and load a specific level
--make at least one level (obviously)
-
-Player:
--
 
 Ball:
--always the same size
--variable speed
 -randomized starting angle
--no more than one
-
-Bricks:
--at least 3 different types
 </br>
 
 class Brick:
