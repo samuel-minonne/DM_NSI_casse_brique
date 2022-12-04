@@ -1,5 +1,6 @@
 import pyxel
 import math
+import random
 #vitesse augmente avec le temps? , angle de départ alléatoire
 #========================================================================parameters===================================================================
 gameTitle = "Casse Briques"
@@ -36,9 +37,9 @@ bricksYSpacing = bricksHeight + 1
 key_left = pyxel.KEY_Q
 key_right = pyxel.KEY_D
 
-level_line0 = [[],[],[],[],[],[]]#la 1ere ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
-level_line1 = [[],[],[],[],[],[]]#la 1ere ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
-level_line2 = [[],[],[],[],[],[]]#la 1ere ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
+level_line0 = [[3,1],[1,1],[0,0],[0,0],[1,1],[3,1]]#la 1ere ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
+level_line1 = [[1,2],[3,1],[1,3],[1,3],[3,1],[1,2]]#la 2eme ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
+level_line2 = [[0,0],[1,2],[1,1],[1,1],[1,2],[0,0]]#la 3eme ligne du dessin, le premier chiffre est le type de brique (0=pas de brique) et le deuxième ses hp
 
 #==================================================================classes================================================================
 #=====the hitboxes module=====
@@ -128,7 +129,9 @@ class Ball:
         self.positivex = (math.cos(math.radians(self.angle)) > 0.0) #True si on va vers la droite (il faut ajouter à x) est positif, sinon false 
         self.positivey = (math.sin(math.radians(self.angle)) > 0.0) #True si on va vers le bas (il faut ajouter à y) est positif, sinon false
         self.bounceList = [] #pour éviter de rebondir plusieurs fois en même temps sur le même mur (et donc être bloqué)
+        self.bouncedX = False #pour éviter des problèmes de plusieurs rebonds hors des limites du terrain
         self.bricksTouched = [] #pour éviter d'enlever plusieurs hp à une seule brique par coup
+        self.randomAngle = random.randint(45,135)
         
     def getX(self):
         """Returns the x coordinate of the ball as an int"""
@@ -141,7 +144,6 @@ class Ball:
     def bounce(self,wallAngle):
         """changes the trajectory of the ball as if it bounced on a wall with the specified angle"""
         print("bounce")
-        print(self.xpos,self.ypos)
         if wallAngle not in self.bounceList:
             self.angle = wallAngle+(wallAngle-self.angle)
             self.bounceList.append(wallAngle)
@@ -151,19 +153,24 @@ class Ball:
         """Moves the ball"""
         self.bounceList = [] #Toujours le bug de la balle qui se bloque sur les bords
         self.bricksTouched = []
+        self.randomAngle = random.randint(45,135)
         xspeed = math.cos(math.radians(self.angle))*self.speed
         yspeed = math.sin(math.radians(self.angle))*self.speed
         self.positivex = (math.cos(math.radians(self.angle)) > 0.0) #True si on va vers la droite (il faut ajouter à x) est positif, sinon false
         self.positivey = (math.sin(math.radians(self.angle)) > 0.0) #True si on va vers le bas (il faut ajouter à y) est positif, sinon false
         
         print("ball movement------------------")
+        
         def collisions():
             """Checks for collisions and modifies the values accordingly"""
             # On regarde d'abord les briques
             for brick in bricksList:
-                status = doHitboxesTouch(self.hitbox,brick.hitbox)
+                status = doHitboxesTouch(self.hitbox,brick.hitbox) #une variable staut pour éviter d'appeler la fonction plusieurs fois
                 if status == ['y','+']:
-                    self.bounce(360)
+                    if brick.type == 3:
+                        self.angle = self.randomAngle
+                    else:
+                        self.bounce(360)
                     if i not in self.bricksTouched: #pour éviter de taper plusieurs fois la même brique (oui je sais le copier-coller c'est pas bien j'aurais du créer une fonction)
                         brick.hp -= 1
                         self.bricksTouched.append(i)
@@ -182,21 +189,29 @@ class Ball:
                     if i not in self.bricksTouched: #pour éviter de taper plusieurs fois la même brique
                         brick.hp -= 1
                         self.bricksTouched.append(i)
-            # On vérifie si on est toujours dans l'écran    
-            if self.xpos <= minX:
-                self.bounce(90)
-            elif self.xpos + ballSize >= maxX:
-                self.bounce(270)
-            elif self.ypos <= minY:
+            # On vérifie si on est toujours dans l'écran
+            print('ball cords',self.xpos,self.ypos)  
+            print('if statement',math.ceil(self.xpos) + ballSize >= maxX)
+            print('MaxX and ball right',maxX,math.ceil(self.xpos) + ballSize) #Car y est après le x? il bounce sur le y et donc il re bounce au x prochain sans que le xpos ait changé (car bonceList a reset entre temps)
+            if math.floor(self.xpos) <= minX:
+                if not self.bouncedX:
+                    self.bounce(90)
+                self.bouncedX = True
+            elif math.ceil(self.xpos) + ballSize >= maxX:
+                if not self.bouncedX:
+                    self.bounce(270)
+                self.bouncedX = True
+            elif math.floor(self.ypos) <= minY:
                 self.bounce(360)
-            elif self.ypos + ballSize >= maxY:
+            elif math.ceil(self.ypos) + ballSize >= maxY:
                 self.bounce(0)
+            print(self.xpos,self.ypos)
             # On fait les collisions avec le plateau
             playerStatus = doHitboxesTouch(ball.hitbox,player.hitbox)
             if playerStatus == ['y','-']: #ATTENTION, il bounce 2 fois (car son ordonné ne change pas) c'est pour ça qu'on a bounceList
-                if ball.xpos < player.xpos:
+                if ball.xpos < player.xpos+4:
                     self.bounce(350)
-                elif ball.xpos > player.xpos + playerLength:
+                elif ball.xpos > player.xpos + playerLength - 4:
                     self.bounce(10)
                 else:
                     self.bounce(0)
@@ -209,7 +224,6 @@ class Ball:
             
             self.positivex = (math.cos(math.radians(self.angle)) > 0.0) #True si on va vers la droite (il faut ajouter à x) est positif, sinon false 
             self.positivey = (math.sin(math.radians(self.angle)) > 0.0) #True si on va vers le bas (il faut ajouter à y) est positif, sinon false
-            print(self.positivex,self.positivey)
             print(self.bounceList)
 
         for i in range (abs(round(xspeed))): #pourquoi i il vaut toujours 0? parceque il le round à 1 et que 1 est exclu xspeed passe en négatif et donc on entre plus dans la boucle
@@ -218,10 +232,12 @@ class Ball:
             if self.positivex == True:
                 self.xpos += 1
                 self.hitbox.moveTo(self.getX(),self.getY())
+                print("moved right")
             elif self.positivex == False :
                 self.xpos -= 1
                 self.hitbox.moveTo(self.getX(),self.getY())
-                
+        self.bouncedX = False
+           
         for i in range (abs(round(yspeed))):
             print("y")
             collisions()
@@ -251,11 +267,11 @@ class Brick:
         """Changes the color according to the HP of the brick"""
         if self.type == 1:
             if self.hp == 1:
-                self.colour = 5
+                self.colour = 6
             elif self.hp == 2:
                 self.colour = 12
             elif self.hp == 3:
-                self.colour = 6
+                self.colour = 5
             else:
                 self.colour = 13
             
@@ -273,10 +289,13 @@ pyxel.init(gameWidth, gameHeight, title=gameTitle, display_scale=gameScale)
 player = Player()
 ball = Ball()
 bricksList = []
-for i in range(6):
-    bricksList.append(Brick(bricksXSpacing*i+2,bricksYSpacing,1,0))
-for i in range(6):
-    bricksList.append(Brick(bricksXSpacing*i+2,2*bricksYSpacing,1,0))
+createBrickLine(level_line0,0)
+createBrickLine(level_line1,1)
+createBrickLine(level_line2,2)
+#for i in range(6):
+#    bricksList.append(Brick(bricksXSpacing*i+2,bricksYSpacing,1,0))
+#for i in range(6):
+#    bricksList.append(Brick(bricksXSpacing*i+2,2*bricksYSpacing,1,0))
 
 
 
