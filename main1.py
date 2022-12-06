@@ -36,6 +36,9 @@ bricksHeight = 8
 bricksXSpacing = bricksLength + 1
 bricksYSpacing = bricksHeight + 1
 
+scoreIncrementation = 10
+scoreMultiplier = 1
+
 key_left = pyxel.KEY_Q
 key_right = pyxel.KEY_D
 
@@ -131,6 +134,8 @@ class Ball:
         self.height = ballSize
         self.hitbox = Hitbox(self.xpos,self.ypos,self.length,self.height)
         self.playerHP = playerStartHP
+        self.scoreMultiplier = 2
+        self.score = 0
         
         self.positivex = (math.cos(math.radians(self.angle)) > 0.0) #True si on va vers la droite (il faut ajouter à x) est positif, sinon false 
         self.positivey = (math.sin(math.radians(self.angle)) > 0.0) #True si on va vers le bas (il faut ajouter à y) est positif, sinon false
@@ -324,6 +329,7 @@ def update():
     listBricksToRemove = []
     for i in range (len(bricksList)): #enlève les briques qui sont mortes
         if bricksList[i].hp <= 0:
+            ball.score += scoreIncrementation*ball.scoreMultiplier
             listBricksToRemove.append(i)
     for i in range (len(listBricksToRemove)):
         bricksList.pop(listBricksToRemove[i])
@@ -336,6 +342,9 @@ def draw():
     pyxel.rect(ball.getX(),ball.getY(),ball.length,ball.height,ballColor)
     for i in range(len(bricksList)):
         pyxel.rect(bricksList[i].xpos,bricksList[i].ypos,bricksLength,bricksHeight,bricksList[i].colour)
+    pyxel.text(3,11,'Score:'+str(ball.score),4)
+    if ball.scoreMultiplier != 1:
+        pyxel.text(3,20,'Score x'+str(scoreMultiplier),4)
     pyxel.text(3,3,'HP:'+str(ball.playerHP),4)
     if bricksList == [] and ball.playerHP >0:
         pyxel.text(65,90,'Well done: YOU WON',4)
