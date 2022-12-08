@@ -38,6 +38,7 @@ bricksYSpacing = bricksHeight + 1
 
 scoreIncrementation = 10
 scoreMultiplier = 1
+scoreMultiplierTimer = 60 #in frames, 1sec = 30 frames
 
 key_left = pyxel.KEY_Q
 key_right = pyxel.KEY_D
@@ -319,7 +320,13 @@ class Brick:
                 self.colour = 9
             else:
                 self.colour = 15
-            
+
+class Score:
+    def __init__(self):
+        self.score = 0
+        self.multiplier = 1
+        self.timer = 0
+                
 def createBrickLine(line:list,lineNumber:int):
     """Creates a line of bricks, with a list of tuples as the line pattern and an int as the line number"""
     for i in range (len(line)):
@@ -350,12 +357,17 @@ def update():
     listBricksToRemove = []
     for i in range (len(bricksList)): #enlève les briques qui sont mortes
         if bricksList[i].hp <= 0:
-            ball.score += scoreIncrementation*ball.scoreMultiplier
+            score.score += scoreIncrementation*score.multiplier
+            score.multiplier = scoreMultiplier
+            score.timer = scoreMultipilerTimer
             listBricksToRemove.append(i)
     for i in range (len(listBricksToRemove)):
         bricksList.pop(listBricksToRemove[i])
         
     ball.speed += ballSpeedIncrementation #augmente la vitesse de la balle de 0.9 toutes les 100 secondes
+    score.timer -=1
+    if score.timer<0:
+        score.multiplier = 1
 
 def draw():
     pyxel.cls(0)
@@ -363,9 +375,9 @@ def draw():
     pyxel.rect(ball.getX(),ball.getY(),ball.length,ball.height,ballColor)
     for i in range(len(bricksList)):
         pyxel.rect(bricksList[i].xpos,bricksList[i].ypos,bricksLength,bricksHeight,bricksList[i].colour)
-    pyxel.text(3,11,'Score:'+str(ball.score),4)
-    if ball.scoreMultiplier != 1:
-        pyxel.text(3,20,'Score x'+str(scoreMultiplier),4)
+    pyxel.text(3,11,'Score:'+str(score.score),4)
+    if score.multiplier != 1:
+        pyxel.text(3,20,'Score x'+str(score.multiplier),4)
     pyxel.text(3,3,'HP:'+str(ball.playerHP),4)
     if bricksList == [] and ball.playerHP >0:
         pyxel.text(65,90,'Well done: YOU WON',4)
