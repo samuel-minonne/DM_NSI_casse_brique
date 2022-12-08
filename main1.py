@@ -168,6 +168,9 @@ class Ball:
         self.randomAngle = random.randint(45,135)
         xspeed = math.cos(math.radians(self.angle))*self.speed
         yspeed = math.sin(math.radians(self.angle))*self.speed
+        xspeedDifferance = abs(xspeed - math.floor(xspeed))
+        yspeedDifferance = abs(yspeed - math.floor(yspeed))
+        print(xspeedDifferance,yspeedDifferance)
         self.positivex = (math.cos(math.radians(self.angle)) > 0.0) #True si on va vers la droite (il faut ajouter à x) est positif, sinon false
         self.positivey = (math.sin(math.radians(self.angle)) > 0.0) #True si on va vers le bas (il faut ajouter à y) est positif, sinon false
         
@@ -257,9 +260,18 @@ class Ball:
             elif self.positivex == False :
                 self.xpos -= 1
                 self.hitbox.moveTo(self.getX(),self.getY())
+        collisions()#on refait ça une dernière fois pour gérer l'arrondi
+        if self.positivex == True:
+            self.xpos += xspeedDifferance
+            self.hitbox.moveTo(self.getX(),self.getY())
+            print("moved right")
+        elif self.positivex == False :
+            self.xpos -= xspeedDifferance
+            self.hitbox.moveTo(self.getX(),self.getY())
         self.bouncedX = False
            
-        for i in range (abs(round(yspeed))):
+           
+        for i in range (abs(round(yspeed))): #on fait la même chose sur l'axe y
             print("y")
             collisions()
             if self.positivey == True :
@@ -268,6 +280,15 @@ class Ball:
             elif self.positivey == False :
                 self.ypos -= 1
                 self.hitbox.moveTo(self.getX(),self.getY())
+        collisions()
+        if self.positivey == True:
+            self.ypos += yspeedDifferance
+            self.hitbox.moveTo(self.getX(),self.getY())
+            print("moved right")
+        elif self.positivey == False :
+            self.ypos -= yspeedDifferance
+            self.hitbox.moveTo(self.getX(),self.getY())
+                
 
 class Brick:
     def __init__(self,x,y,hp:int,type:int):
