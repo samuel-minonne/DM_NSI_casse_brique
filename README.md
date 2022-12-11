@@ -14,7 +14,7 @@ There are three types of bricks:
 
 Use this link to play the oldest version of the game (with not too many bugs): https://kitao.github.io/pyxel/wasm/launcher/?run=samuel-minonne.DM_NSI_casse_brique.main
 
-Use this link to play the latest version of the game (with lots of bugs): https://kitao.github.io/pyxel/wasm/launcher/?run=samuel-minonne.DM_NSI_casse_brique.mainv2
+Use this link to play the latest version of the game (with lots of bugs): https://kitao.github.io/pyxel/wasm/launcher/?run=samuel-minonne.DM_NSI_casse_brique.mainv2 (this version has a way better movement system but the collisions are not reliable)
 
 Know bugs:
 - The lives system doesn't work properly (sometimes more than one hp is lost)
