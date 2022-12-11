@@ -274,14 +274,14 @@ class Ball:
         collisions(isPrediction=True)
         if (self.predicted_positivex and round(self.xpos + xspeedDifference) != self.getX()) or (not self.predicted_positivex and round(self.xpos - xspeedDifference) != self.getX()):
             collisions()#on refait ça une dernière fois pour gérer l'arrondi 
-            if self.positivex == True:
-                self.xpos += xspeedDifference
-                self.hitbox.moveTo(self.getX(),self.getY())
-                print("moved right",xspeedDifference)
-            elif self.positivex == False :
-                self.xpos -= xspeedDifference
-                self.hitbox.moveTo(self.getX(),self.getY())
-                print("moved left",xspeedDifference)
+        if self.positivex == True:
+            self.xpos += xspeedDifference
+            self.hitbox.moveTo(self.getX(),self.getY())
+            print("moved right",xspeedDifference)
+        elif self.positivex == False :
+            self.xpos -= xspeedDifference
+            self.hitbox.moveTo(self.getX(),self.getY())
+            print("moved left",xspeedDifference)
         self.bouncedX = False
            
            
@@ -301,14 +301,14 @@ class Ball:
         #if round(self.ypos + yspeedDifference) != self.getY():
         if (self.predicted_positivey and round(self.ypos + yspeedDifference) != self.getY()) or (not self.predicted_positivey and round(self.ypos - yspeedDifference) != self.getY()):
             collisions()#ne doit s'exécuter que si on change de position (la hitbox en tout cas)
-            if self.positivey == True:
-                self.ypos += yspeedDifference
-                self.hitbox.moveTo(self.getX(),self.getY())
-                print("moved down",yspeedDifference)
-            elif self.positivey == False :
-                self.ypos -= yspeedDifference
-                self.hitbox.moveTo(self.getX(),self.getY())
-                print("moved up",yspeedDifference)# il bounce deux fois car il a pas move (il move pas assez pour faire bouger la hitbox et donc rebondit deux fois), comme il bouge après avoir rebondi les valeurs de direction sont différentes et donc il bounce quand même même si il ne bougeras pas
+        if self.positivey == True:
+            self.ypos += yspeedDifference
+            self.hitbox.moveTo(self.getX(),self.getY())
+            print("moved down",yspeedDifference)
+        elif self.positivey == False :
+            self.ypos -= yspeedDifference
+            self.hitbox.moveTo(self.getX(),self.getY())
+            print("moved up",yspeedDifference)# il bounce deux fois car il a pas move (il move pas assez pour faire bouger la hitbox et donc rebondit deux fois), comme il bouge après avoir rebondi les valeurs de direction sont différentes et donc il bounce quand même même si il ne bougeras pas
         
 
 class Brick:
