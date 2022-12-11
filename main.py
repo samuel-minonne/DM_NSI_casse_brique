@@ -37,8 +37,8 @@ bricksXSpacing = bricksLength + 1
 bricksYSpacing = bricksHeight + 1
 
 scoreIncrementation = 10
-scoreMultiplier = 1
-scoreMultiplierTimer = 60 #in frames, 1sec = 30 frames
+scoreMultiplier = 2
+scoreMultiplierTimer = 60 #in frames
 
 key_left = pyxel.KEY_Q
 key_right = pyxel.KEY_D
@@ -137,6 +137,7 @@ class Ball:
         self.playerHP = playerStartHP
         self.scoreMultiplier = 2
         self.score = 0
+        self.scoreTimer = 0
         
         self.positivex = (math.cos(math.radians(self.angle)) > 0.0) #True si on va vers la droite (il faut ajouter à x) est positif, sinon false 
         self.positivey = (math.sin(math.radians(self.angle)) > 0.0) #True si on va vers le bas (il faut ajouter à y) est positif, sinon false
@@ -169,9 +170,6 @@ class Ball:
         self.randomAngle = random.randint(45,135)
         xspeed = math.cos(math.radians(self.angle))*self.speed
         yspeed = math.sin(math.radians(self.angle))*self.speed
-        xspeedDifferance = abs(xspeed - math.floor(xspeed))
-        yspeedDifferance = abs(yspeed - math.floor(yspeed))
-        print(xspeedDifferance,yspeedDifferance)
         self.positivex = (math.cos(math.radians(self.angle)) > 0.0) #True si on va vers la droite (il faut ajouter à x) est positif, sinon false
         self.positivey = (math.sin(math.radians(self.angle)) > 0.0) #True si on va vers le bas (il faut ajouter à y) est positif, sinon false
         
@@ -261,18 +259,9 @@ class Ball:
             elif self.positivex == False :
                 self.xpos -= 1
                 self.hitbox.moveTo(self.getX(),self.getY())
-        collisions()#on refait ça une dernière fois pour gérer l'arrondi
-        if self.positivex == True:
-            self.xpos += xspeedDifferance
-            self.hitbox.moveTo(self.getX(),self.getY())
-            print("moved right")
-        elif self.positivex == False :
-            self.xpos -= xspeedDifferance
-            self.hitbox.moveTo(self.getX(),self.getY())
         self.bouncedX = False
            
-           
-        for i in range (abs(round(yspeed))): #on fait la même chose sur l'axe y
+        for i in range (abs(round(yspeed))):
             print("y")
             collisions()
             if self.positivey == True :
@@ -281,15 +270,6 @@ class Ball:
             elif self.positivey == False :
                 self.ypos -= 1
                 self.hitbox.moveTo(self.getX(),self.getY())
-        collisions()
-        if self.positivey == True:
-            self.ypos += yspeedDifferance
-            self.hitbox.moveTo(self.getX(),self.getY())
-            print("moved right")
-        elif self.positivey == False :
-            self.ypos -= yspeedDifferance
-            self.hitbox.moveTo(self.getX(),self.getY())
-                
 
 class Brick:
     def __init__(self,x,y,hp:int,type:int):
@@ -320,13 +300,7 @@ class Brick:
                 self.colour = 9
             else:
                 self.colour = 15
-
-class Score:
-    def __init__(self):
-        self.score = 0
-        self.multiplier = 1
-        self.timer = 0
-                
+            
 def createBrickLine(line:list,lineNumber:int):
     """Creates a line of bricks, with a list of tuples as the line pattern and an int as the line number"""
     for i in range (len(line)):
@@ -357,17 +331,17 @@ def update():
     listBricksToRemove = []
     for i in range (len(bricksList)): #enlève les briques qui sont mortes
         if bricksList[i].hp <= 0:
-            score.score += scoreIncrementation*score.multiplier
-            score.multiplier = scoreMultiplier
-            score.timer = scoreMultipilerTimer
+            ball.score += scoreIncrementation*ball.scoreMultiplier
+            ball.scoreTimer = scoreMultiplierTimer
+            ball.scoreMultiplier = scoreMultiplier
             listBricksToRemove.append(i)
     for i in range (len(listBricksToRemove)):
         bricksList.pop(listBricksToRemove[i])
         
     ball.speed += ballSpeedIncrementation #augmente la vitesse de la balle de 0.9 toutes les 100 secondes
-    score.timer -=1
-    if score.timer<0:
-        score.multiplier = 1
+    ball.scoreTimer -= 1
+    if ball.scoreTimer < 0:
+        ball.scoreMultiplier = 1
 
 def draw():
     pyxel.cls(0)
@@ -375,13 +349,15 @@ def draw():
     pyxel.rect(ball.getX(),ball.getY(),ball.length,ball.height,ballColor)
     for i in range(len(bricksList)):
         pyxel.rect(bricksList[i].xpos,bricksList[i].ypos,bricksLength,bricksHeight,bricksList[i].colour)
-    pyxel.text(3,11,'Score:'+str(score.score),4)
-    if score.multiplier != 1:
-        pyxel.text(3,20,'Score x'+str(score.multiplier),4)
+    pyxel.text(3,11,'Score:'+str(ball.score),4)
+    if ball.scoreMultiplier != 1:
+        pyxel.text(3,20,'Score x'+str(scoreMultiplier),4)
     pyxel.text(3,3,'HP:'+str(ball.playerHP),4)
     if bricksList == [] and ball.playerHP >0:
         pyxel.text(65,90,'Well done: YOU WON',4)
     if ball.playerHP <= 0:
         pyxel.text(70,90,'YOU LOST',4)
+    if ball.scoreMultiplier != 1:
+        pyxel.text(3,20,'Score x'+str(ball.scoreMultiplier),4)
     
 pyxel.run(update, draw)
